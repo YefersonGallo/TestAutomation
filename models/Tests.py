@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 import time
 
 
@@ -23,8 +24,8 @@ class Test:
     def login(self):
         driver = self.driver
         driver.find_element_by_xpath("//a[text()='Iniciar sesión']").click()
-        # driver.find_element_by_name("UserName").send_keys("jotiwaw592@tibui.com")
-        # driver.find_element_by_name("Password").send_keys("test1234")
+        #driver.find_element_by_name("UserName").send_keys("jotiwaw592@tibui.com")
+        #driver.find_element_by_name("Password").send_keys("test1234")
         driver.find_element_by_name("UserName").send_keys("demomintic@gmail.com ")
         driver.find_element_by_name("Password").send_keys("monolegaldemo")
         # driver.find_element_by_name("UserName").send_keys(email)
@@ -71,6 +72,26 @@ class Test:
         driver.find_element_by_xpath('//a[@data-bind="click: $root.MostrarNotificaciones"]').click()
         print(driver.find_element_by_class_name("recordatorio novisto").value_of_css_property('background-color'))
 
+    def select_filter(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath('//a[@data-bind="click: $root.MostrarNotificaciones"]').click()
+        print(driver.find_element_by_xpath('//div[@class="dropdown btn-group"]').text)
+        driver.find_element_by_xpath('//div[@class="dropdown btn-group"]').click()
+        driver.find_element_by_xpath('//a[text()="No Vistas"]').click()
+
+    def show_info_act(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_id("05001310500520140119800").click()
+        time.sleep(3)
+        print(driver.find_element_by_xpath('//span[@data-bind="text: Despacho"]').text)
+        print(driver.find_element_by_xpath('//span[@data-bind="text: Ponente"]').text)
+        print(driver.find_element_by_xpath('//span[@data-bind="text: Demandantes"]').text)
+        print(driver.find_element_by_xpath('//span[@data-bind="text: Demandados"]').text)
+        print(driver.find_element_by_xpath('//span[@data-bind="text: UbicacionExp"]').text)
+        print(driver.find_element_by_xpath('//span[@data-bind="text:NumActuaciones"]').text)
+
     def button_do_it_now(self):
         self.login()
         driver = self.driver
@@ -100,7 +121,7 @@ class Test:
     def add_label(self):
         self.login()
         driver = self.driver
-        driver.find_element_by_id("11001310500520010034000").click()
+        driver.find_element_by_id("05001310500520140119800").click()
         button = driver.find_element_by_xpath('//button[text()="Añadir Etiqueta"]')
         driver.execute_script("arguments[0].click();", button)
         driver.implicitly_wait(3)
@@ -151,8 +172,42 @@ class Test:
         self.login()
         driver = self.driver
         driver.find_element_by_xpath('//a[@data-bind="click: $root.MostrarRecordatorios"]').click()
+        time.sleep(5)
         reminders = driver.find_elements_by_xpath('//div[@class="recordatorio recordatorio_futuro"]')
-        len(reminders)
+        print(len(reminders))
+        reminders[0].find_element_by_xpath(
+            ('//div[@class="proceso-pie"]/ul[@class="stadisticas-proceso"]/li[@title="Eliminar Recordatorio"]')).click()
+        print(driver.find_element_by_id("dialog-confirm-recordatorio").is_displayed())
+
+    def change_plan_process(self):
+        self.login()
+        driver = self.driver
+        time.sleep(5)
+        driver.find_element_by_id("05001310500520140119800").click()
+        time.sleep(3)
+        driver.find_element_by_xpath('//div[@data-bind="with: Plan, visible: MostrarPlanConsultaDropDown()"]').click()
+        driver.find_element_by_xpath('//li[@data-bind="class: EsTodosLosDias()"]').click()
+
+    def back_processes(self):
+        self.login()
+        driver = self.driver
+        time.sleep(5)
+        driver.find_element_by_id("05001310500520140119800").click()
+        time.sleep(15)
+        driver.find_element_by_xpath('//button[text()="Volver a Procesos"]').click()
+
+    def order_first_not_change(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath('//b[@data-bind="text:OrdenadoPor"]').click()
+        driver.find_element_by_xpath('//li[@data-bind="css: CssPrimerosParados()"]').click()
+
+    def add_label_from_process(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath('//div[@id="05001310500520140119800"]/div[@class="proceso-cabecera"]/span[@class="fecha-actualizacion"]/div[@data-bind="visible:MostrarBotonAnyadirEtiqueta"]/a').click()
+        driver.find_element_by_xpath('//div[@id="05001310500520140119800"]/div[@class="proceso-cabecera"]/span[@class="fecha-actualizacion"]/div[@data-bind="visible:flagMostrarTextBoxEtiqueta"]/div/input[@id="etiquetaProcesoinput"]').send_keys("Etiqueta_Procesos")
+        driver.find_element_by_xpath('//div[@id="05001310500520140119800"]/div[@class="proceso-cabecera"]/span[@class="fecha-actualizacion"]/div[@data-bind="visible:flagMostrarTextBoxEtiqueta"]/div/button[@data-bind="click: ConfirmarCambiarEtiqueta"]').click()
 
     def create_report(self):
         self.login()
@@ -188,6 +243,14 @@ class Test:
         driver.find_element_by_id("Descripcion").send_keys("Prueba informe personalizado")
         driver.find_element_by_id("CorreosAdicionales").send_keys("diego@monolegal.co,ivan@monolegal.co")
         driver.find_element_by_id("settings_save").click()
+
+    def click_generate_report(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath("//span[text()='Ver mis Informes']").click()
+        print(driver.find_element_by_id("dialog-informegenerando").is_displayed())
+        driver.find_element_by_xpath('//a[@Generar Informe]').click()
+        print(driver.find_element_by_id("dialog-informegenerando").is_displayed())
 
     def upload_document(self):
         import os
@@ -227,15 +290,16 @@ class Test:
         self.login()
         driver = self.driver
         driver.implicitly_wait(5)
-        driver.find_element_by_id("11001310500520010034000").click()
+        driver.find_element_by_id("05001310500520140119800").click()
         time.sleep(5)
         driver.find_element_by_xpath('//img[@title="Documentos"]').click()
         driver.find_element_by_xpath(
             '//div[@class="proceso-cabecera"]/span/a[@data-bind="click:$root.MostrarDocumento, text:Nombre"]').click()
-        # time.sleep(5)
-        # driver.find_element_by_xpath('//button[@data-bind="click: $root.BorrarDocument"]').click()
-        # time.sleep(5)
-        # driver.find_element_by_xpath('//button[@data-bind="click: $root.EliminarDocumento"]').click()
+        driver.find_element_by_xpath('//button[@data-bind="click: $root.BorrarDocument"]').click()
+        time.sleep(2)
+        print(len(driver.find_elements_by_xpath('//button[@data-bind="click: $root.EliminarDocumento"]')))
+        button = driver.find_elements_by_xpath('//button[@data-bind="click: $root.EliminarDocumento"]')[0]
+        driver.execute_script("arguments[0].click();", button)
         # time.sleep(60)
         # driver.find_element_by_xpath('//a[@data-bind="click: $root.MostrarNotificaciones"]').click()
         # notifications = driver.find_element_by_id("stream-notificaciones-id")
@@ -246,9 +310,13 @@ class Test:
         driver = self.driver
         driver.find_element_by_xpath('//a[text()="Pagina de Perfil"]').click()
         driver.find_element_by_xpath('//div[@data-bind="with: PlanPorDefecto"]').click()
+        time.sleep(10)
         driver.find_element_by_id("2diasMaJu").click()
         time.sleep(5)
-        driver.find_element_by_xpath('//button[text()="Cambiar el plan"]').click()
+        print(driver.find_element_by_xpath('//button[text()="Cambiar el plan"]').is_displayed())
+        button = driver.find_element_by_xpath('//button[text()="Cambiar el plan"]')
+        driver.execute_script("arguments[0].click();", button)
+        driver.find_element_by_xpath("//a[text()='PROCESOS']").click()
 
     def add_associated(self):
         self.login()
@@ -279,7 +347,96 @@ class Test:
         self.login()
         driver = self.driver
         driver.find_element_by_xpath("//a[text()='TYBA']").click()
+        time.sleep(5)
         print(len(driver.find_elements_by_xpath('//div[@class="stream home-stream"]/ol[@class="stream-items"]')) == 0)
+
+    def create_process_TYBA(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath("//a[text()='TYBA']").click()
+        time.sleep(5)
+        driver.find_element_by_id("NumProceso").send_keys("05004408900120200000200")
+        driver.find_element_by_xpath("//button[text()='Añadir']").click()
+
+    def create_process_error_TYBA(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath("//a[text()='TYBA']").click()
+        time.sleep(10)
+        #driver.find_element_by_id("NumProceso").send_keys("10002017236598741254679")
+        #driver.find_element_by_xpath("//button[text()='Añadir']").click()
+        #time.sleep(20)
+        process = driver.find_element_by_xpath('//div[@class="proceso ProcesoBackgroundError"]')
+        print(process.value_of_css_property("background-color"))
+
+    def delete_process_TYBA(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath("//a[text()='TYBA']").click()
+        time.sleep(10)
+        processes = driver.find_elements_by_xpath('//li[@class="stream-item"]')
+        options = processes[0].find_elements_by_xpath('//ul[@class="stadisticas-proceso"]/li/a')
+        options[3].click()
+        driver.find_element_by_xpath('//button[text()="Borrar"]').click()
+
+    def create_comment_TYBA(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath("//a[text()='TYBA']").click()
+        time.sleep(10)
+        processes = driver.find_elements_by_xpath('//li[@class="stream-item"]')
+        options = processes[0].find_elements_by_xpath('//ul[@class="stadisticas-proceso"]/li/a')
+        options[1].click()
+        driver.find_element_by_xpath('//textarea[@name="add_comment_text_text"]').send_keys("Comentario proceso TYBA")
+        driver.find_element_by_xpath('//button[text()="Ok"]').click()
+
+    def create_reminder_TYBA(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath("//a[text()='TYBA']").click()
+        time.sleep(10)
+        processes = driver.find_elements_by_xpath('//li[@class="stream-item"]')
+        options = processes[0].find_elements_by_xpath('//ul[@class="stadisticas-proceso"]/li/a')
+        options[1].click()
+        driver.find_element_by_xpath('//textarea[@name="add_comment_text_text"]').send_keys("Recordatorio proceso TYBA")
+        driver.find_element_by_xpath('//button[text()="Mañana"]').click()
+        driver.find_element_by_xpath('//button[text()="Ok"]').click()
+
+    def add_label_TYBA(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath("//a[text()='TYBA']").click()
+        time.sleep(10)
+        driver.find_element_by_xpath('//a[@title="cambiar etiqueta"]').click()
+        driver.find_element_by_id("etiquetaProcesoinput").click()
+        driver.find_element_by_id("etiquetaProcesoinput").send_keys("Etiqueta")
+        driver.find_element_by_xpath('//button[text()="Ok"]').click()
+        driver.find_element_by_xpath('//button[text()="Cancelar"]').click()
+
+    def delete_comment_TYBA(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath("//a[text()='TYBA']").click()
+        time.sleep(10)
+        processes = driver.find_elements_by_xpath('//li[@class="stream-item"]')
+        options = processes[0].find_elements_by_xpath('//ul[@class="stadisticas-proceso"]/li/a')
+        options[0].click()
+        driver.find_element_by_id("alistacomentarios").click()
+        time.sleep(3)
+        coms = driver.find_elements_by_xpath('//button[text()="Eliminar"]')
+        coms[1].click()
+        time.sleep(3)
+        driver.find_element_by_xpath(
+            '//borrarcomentario/div[@class="modal  fade in"]/div[@class="modal-body"]/div[@class="modal-footer"]/button[text()="Eliminar"]').click()
+
+    def check_read_TYBA(self):
+        self.login()
+        driver = self.driver
+        driver.find_element_by_xpath("//a[text()='TYBA']").click()
+        time.sleep(10)
+        elements = driver.find_elements_by_xpath('//a[@class="js-nav"]')
+        elements[1].click()
+        driver.find_element_by_xpath('//button[text()="Marcar como leidas"]').click()
 
     def go_RamaJudicial(self):
         self.login()
@@ -288,5 +445,7 @@ class Test:
         driver.find_element_by_xpath("//a[text()='Rama Judicial']").click()
 
 
+
+
 test = Test()
-test.delete_reminder_from_reminders()
+test.add_label()
